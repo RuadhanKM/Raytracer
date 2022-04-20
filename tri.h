@@ -21,4 +21,10 @@ class tri {
 			
 			return edge1.cross(edge2).normalize();
 		}
+		
+		friend std::ostream& operator<<(std::ostream& os, const tri& t)
+		{
+			os << t.a << '\n' << t.b << '\n' << t.c;
+			return os;
+		}
 };

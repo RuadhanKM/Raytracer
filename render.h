@@ -8,13 +8,14 @@ class render {
 		
 		float EPSILON = 0.000001;
 		
-		std::vector<tri*> objs = {};
+		std::vector<tri> objs = {};
+		std::vector<cube*> cubes = {};
 		std::vector<light*> lights = {};
 		
 		COORD topLeft;
 		HANDLE hOut;
 		
-		std::string grayscale[5] = {"..", "**", "FF", "@@", "##"}; 
+		std::string grayscale[5] = {"..", "**", "FF", "##", "@@"}; 
 		
 		render(double x, double y) {
 			hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -39,6 +40,16 @@ class render {
 		void renderFrame(camera cam) {
 			SetConsoleCursorPosition(hOut, topLeft);
 			
+			std::vector<tri> allObjs = objs;
+			for (cube* cp : cubes) {
+				cube c = *cp;
+				
+				c.getFaces();
+				for (tri cface : c.faces) {
+					allObjs.push_back(cface);
+				}
+			}
+			
 			std::string fins;
 			for (double y=vsy/2; y>-vsy/2; --y){
 				for (double x=-vsx/2; x<vsx/2; ++x){
@@ -54,9 +65,9 @@ class render {
 					nc = nc + cam.pos;
 					fc = fc + cam.pos;
 					
-					for (tri* tp : objs) {
-						tri t = *tp;
-						
+					double closestPoint = 1000;
+					
+					for (tri t : allObjs) {
 						// Check for intersection 
 							vec3 e0 = t.b - t.a;
 							vec3 e1 = t.c - t.a;
@@ -79,21 +90,32 @@ class render {
 
 						if (tb > EPSILON && tb < sqrtf(dir.dot(dir))) {
 							vec3 point = nc + dir_norm * tb;
+							vec3 relPoint = point - cam.pos;
+							if (relPoint.mag() < closestPoint) {
+								closestPoint = relPoint.mag();
 							
-							for (light* lp : lights) {
-								light l = *lp;
+							
 								
-								vec3 norm = t.normal();
-								vec3 lightDir = (l.pos - point);
-								double diffuse = std::max(norm.dot(lightDir) * l.intensity, 0.0);
+								for (light* lp : lights) {
+									light l = *lp;
+									
+									vec3 norm = t.normal().normalize();
+									vec3 lightDir = (l.pos - point).normalize();
+									
+									double diffuse = norm.dot(lightDir);
+									diffuse *= l.intensity;
+									diffuse = std::max(diffuse, 0.0);
+									
+									lightness = diffuse;
+								}
 								
-								lightness += diffuse;
+								
+								//lightness = 1/(point - cam.pos).mag() * 30;
+								
+								
+								lightnessInt = std::round(std::min(std::max(lightness, 0.0), 4.0));
+								pixelUp = true;
 							}
-							lightnessInt = std::round(std::min(std::max(lightness, 0.0), 4.0));
-							
-							
-							pixelUp = true;
-							break;
 						}
 					}
 					

@@ -11,20 +11,29 @@ class camera {
 		}
 		
 		vec3 getRadRot() {
-			return vec3(rot.x * 0.017453292519943, rot.y * 0.017453292519943, rot.z * 0.017453292519943);
+			return rot * 0.017453292519943;
 		}
-		vec3 rotate(vec3 point) {			
+		vec3 rotate(vec3 point) {
+			vec3 radRot = getRadRot();
+			vec3 newPoint;
+			
 			// Rotation about the x axis
-			point.y = point.y * cos(getRadRot().x) - point.z * sin(getRadRot().x);
-			point.z = point.y * sin(getRadRot().x) + point.z * cos(getRadRot().x);
+			newPoint.y = point.y * cos(radRot.x) - point.z * sin(radRot.x);
+			newPoint.z = point.y * sin(radRot.x) + point.z * cos(radRot.x);
+			point.y = newPoint.y;
+			point.z = newPoint.z;
 			
 			// Rotation about the y axis
-			point.x =  point.x * cos(getRadRot().y) + point.z * sin(getRadRot().y);
-			point.z = -point.x * sin(getRadRot().y) + point.z * cos(getRadRot().y);
+			newPoint.x =  point.x * cos(radRot.y) + point.z * sin(radRot.y);
+			newPoint.z = -point.x * sin(radRot.y) + point.z * cos(radRot.y);
+			point.x = newPoint.x;
+			point.z = newPoint.z;
 			
 			// Rotation about the z axis
-			point.x = point.x * cos(getRadRot().z) - point.y * sin(getRadRot().z);
-			point.y = point.x * sin(getRadRot().z) + point.y * cos(getRadRot().z);
+			newPoint.x = point.x * cos(radRot.z) - point.y * sin(radRot.z);
+			newPoint.y = point.x * sin(radRot.z) + point.y * cos(radRot.z);
+			point.x = newPoint.x;
+			point.y = newPoint.y;
 			
 			return point;
 		}
