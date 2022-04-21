@@ -10,6 +10,8 @@ class cube {
 			size = s;
 			pos = p;
 			rot = r;
+			
+			getFaces();
 		}
 		
 		void getFaces() {

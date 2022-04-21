@@ -25,7 +25,7 @@ class vec3 {
 		}
 		
 		double mag() {
-			return sqrtf(x * x + y * y + z * z);
+			return sqrt(x * x + y * y + z * z);
 		}
 
 		vec3 cross(const vec3 & b) {
@@ -37,7 +37,7 @@ class vec3 {
 		}
 
 		vec3 normalize() {
-			const double s = 1.0f / sqrtf(x * x + y * y + z * z);
+			const double s = 1.0f / sqrt(x * x + y * y + z * z);
 			return vec3(x * s, y * s, z * s);
 		}
 		

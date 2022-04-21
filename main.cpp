@@ -17,19 +17,17 @@
 #include "render.h"
 
 int main(int argc, char *argv[]) {
-	render viewport(94, 53);
+	render viewport(128, 72);
 	camera cam(vec3(), vec3(), 1);
-	
-	cube c(vec3(0, 0, 100), 10, vec3());
-	viewport.cubes.push_back(&c);
 	
 	cube c2(vec3(40, 0, 100), 10, vec3());
 	viewport.cubes.push_back(&c2);
 	
-	//square plane(vec3(0,-10,0),1000,vec3(90,0,0));
-	//viewport.cubes
+	square floor(vec3(0,-10,0), 1000, vec3(90,0,0));
+	viewport.squares.push_back(&floor);
+	
 
-	light l(vec3(0, 25, 70), 5);
+	light l(vec3(0, 25, 70), 8);
 	viewport.lights.push_back(&l);
 	
 	double sens = 0.2;
@@ -50,11 +48,14 @@ int main(int argc, char *argv[]) {
 		
 		
 		c2.rot.x += 3;
+		c2.getFaces();
+		
+		if (GetKeyState(VK_RIGHT) & 0x8000) {l.pos = l.pos + vec3(1,0,0);}
+		if (GetKeyState(VK_LEFT) & 0x8000) {l.pos = l.pos - vec3(1,0,0);}
+		if (GetKeyState(VK_UP) & 0x8000) {l.pos = l.pos - vec3(0,0,1);}
+		if (GetKeyState(VK_DOWN) & 0x8000) {l.pos = l.pos + vec3(0,0,1);}
 		
 		
-		
-		std::cout << cam.pos << "\n";
-		std::cout << cam.rot << "\n";
 		
 		viewport.renderFrame(cam);
 	}

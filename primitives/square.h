@@ -10,6 +10,8 @@ class square {
 			size = s;
 			pos = p;
 			rot = r;
+			
+			getFaces();
 		}
 		
 		void getFaces() {

@@ -10,12 +10,13 @@ class render {
 		
 		std::vector<tri> objs = {};
 		std::vector<cube*> cubes = {};
+		std::vector<square*> squares = {};
 		std::vector<light*> lights = {};
 		
 		COORD topLeft;
 		HANDLE hOut;
 		
-		std::string grayscale[5] = {"..", "**", "FF", "##", "@@"}; 
+		std::string grayscale[7] = {"..", "::", "()", "xx", "XX", "##", "$$"}; 
 		
 		render(double x, double y) {
 			hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -44,9 +45,15 @@ class render {
 			for (cube* cp : cubes) {
 				cube c = *cp;
 				
-				c.getFaces();
 				for (tri cface : c.faces) {
 					allObjs.push_back(cface);
+				}
+			}
+			for (square* sp : squares) {
+				square s = *sp;
+				
+				for (tri sface : s.faces) {
+					allObjs.push_back(sface);
 				}
 			}
 			
@@ -110,10 +117,11 @@ class render {
 								}
 								
 								
-								//lightness = 1/(point - cam.pos).mag() * 30;
+								//double fog = std::min(20/(point - cam.pos).mag(), 1.0);
+								//lightness *= fog;
 								
 								
-								lightnessInt = std::round(std::min(std::max(lightness, 0.0), 4.0));
+								lightnessInt = std::round(std::min(std::max(lightness, 0.0), 6.0));
 								pixelUp = true;
 							}
 						}
