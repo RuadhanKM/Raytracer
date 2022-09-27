@@ -16,8 +16,6 @@ class render {
 		COORD topLeft;
 		HANDLE hOut;
 		
-		std::string grayscale[7] = {"..", "::", "()", "xx", "XX", "##", "$$"}; 
-		
 		render(double x, double y) {
 			hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 			CONSOLE_CURSOR_INFO     cursorInfo;
@@ -27,6 +25,11 @@ class render {
 			CONSOLE_SCREEN_BUFFER_INFO cbsi;
 			GetConsoleScreenBufferInfo(hOut, &cbsi);
 			topLeft = cbsi.dwCursorPosition;
+			DWORD consoleModeAfter;
+			GetConsoleMode(hOut, &consoleModeAfter);
+			consoleModeAfter |= 0x0004;
+			consoleModeAfter |= 0x0008;            
+			SetConsoleMode(hOut, consoleModeAfter);
 			SetConsoleCursorPosition(hOut, topLeft);
 			RECT desktop;
 			const HWND hDesktop = GetDesktopWindow();
@@ -60,9 +63,9 @@ class render {
 			std::string fins;
 			for (double y=vsy/2; y>-vsy/2; --y){
 				for (double x=-vsx/2; x<vsx/2; ++x){
-					double lightness = 0;
-					int lightnessInt = 0;
 					bool pixelUp = false;
+					tri finTri;
+					vec3 finPoint;
 					
 					vec3 nc(x/(vsx/2), y/(vsx/2), cam.fov);
 					nc = cam.rotate(nc);
@@ -100,37 +103,37 @@ class render {
 							vec3 relPoint = point - cam.pos;
 							if (relPoint.mag() < closestPoint) {
 								closestPoint = relPoint.mag();
-							
-							
-								
-								for (light* lp : lights) {
-									light l = *lp;
-									
-									vec3 norm = t.normal().normalize();
-									vec3 lightDir = (l.pos - point).normalize();
-									
-									double diffuse = norm.dot(lightDir);
-									diffuse *= l.intensity;
-									diffuse = std::max(diffuse, 0.0);
-									
-									lightness = diffuse;
-								}
-								
-								
-								//double fog = std::min(20/(point - cam.pos).mag(), 1.0);
-								//lightness *= fog;
-								
-								
-								lightnessInt = std::round(std::min(std::max(lightness, 0.0), 6.0));
+								finTri = t;
+								finPoint = point;
 								pixelUp = true;
 							}
 						}
 					}
 					
 					if (pixelUp) {
-						fins += grayscale[lightnessInt];
+						double lightness = 0;
+
+						for (light* lp : lights) {
+							light l = *lp;
+							
+							vec3 norm = finTri.normal().normalize();
+							vec3 lightDir = (l.pos - finPoint).normalize();
+							
+							double diffuse = norm.dot(lightDir);
+							diffuse *= l.intensity;
+							diffuse = std::max(diffuse, 0.0);
+							
+							lightness = diffuse;
+						}
+						
+						vec3 finColor = finTri.color * lightness;
+						
+						//double fog = std::min(20/(point - cam.pos).mag(), 1.0);
+						//lightness *= fog;
+
+						fins += "\x1b[48;2;" + std::to_string(int (finColor.x)) + ";" + std::to_string(int (finColor.y)) + ";" + std::to_string(int (finColor.z)) + "m  ";
 					} else {
-						fins += "  ";
+						fins += "\x1b[48;2;0;0;0m  ";
 					}
 				}
 				fins += "\n";

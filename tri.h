@@ -3,16 +3,19 @@ class tri {
 		vec3 a;
 		vec3 b;
 		vec3 c;
+		vec3 color;
 		
-		tri(vec3 as, vec3 bs, vec3 cs) {
+		tri(vec3 as, vec3 bs, vec3 cs, vec3 colors) {
 			a = as;
 			b = bs;
 			c = cs;
+			color = colors;
 		}
 		tri() {
 			a = vec3();
 			b = vec3();
 			c = vec3();
+			color = vec3();
 		}
 		
 		vec3 normal() {

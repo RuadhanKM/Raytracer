@@ -20,10 +20,10 @@ int main(int argc, char *argv[]) {
 	render viewport(128, 72);
 	camera cam(vec3(), vec3(), 1);
 	
-	cube c2(vec3(40, 0, 100), 10, vec3());
+	cube c2(vec3(40, 0, 100), 10, vec3(), vec3(0, 255, 0));
 	viewport.cubes.push_back(&c2);
 	
-	square floor(vec3(0,-10,0), 1000, vec3(90,0,0));
+	square floor(vec3(0,-10,0), 1000, vec3(90,0,0), vec3(255, 0, 0));
 	viewport.squares.push_back(&floor);
 	
 

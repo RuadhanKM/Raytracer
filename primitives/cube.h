@@ -3,13 +3,15 @@ class cube {
 		double size;
 		vec3 pos;
 		vec3 rot;
+		vec3 color;
 		
 		std::vector<tri> faces = {};
 	
-		cube(vec3 p, double s, vec3 r) {
+		cube(vec3 p, double s, vec3 r, vec3 c) {
 			size = s;
 			pos = p;
 			rot = r;
+			color = c;
 			
 			getFaces();
 		}
@@ -17,14 +19,14 @@ class cube {
 		void getFaces() {
 			faces = {};
 			
-			square front(	vec3(pos.x, pos.y, pos.z + size)	.rotate(pos, rot), size, vec3(0,180,0) 		+ rot);
-			square back(	vec3(pos.x, pos.y, pos.z - size)	.rotate(pos, rot), size, vec3() 			+ rot);
+			square front(	vec3(pos.x, pos.y, pos.z + size)	.rotate(pos, rot), size, vec3(0,180,0) 		+ rot, color);
+			square back(	vec3(pos.x, pos.y, pos.z - size)	.rotate(pos, rot), size, vec3() 			+ rot, color);
 			
-			square top(		vec3(pos.x, pos.y + size, pos.z)	.rotate(pos, rot), size, vec3(90, 0, 0) 	+ rot);
-			square bottom(	vec3(pos.x, pos.y - size, pos.z)	.rotate(pos, rot), size, vec3(-90, 0, 0) 	+ rot);
+			square top(		vec3(pos.x, pos.y + size, pos.z)	.rotate(pos, rot), size, vec3(90, 0, 0) 	+ rot, color);
+			square bottom(	vec3(pos.x, pos.y - size, pos.z)	.rotate(pos, rot), size, vec3(-90, 0, 0) 	+ rot, color);
 			
-			square left(	vec3(pos.x + size, pos.y, pos.z)	.rotate(pos, rot), size, vec3(0, -90, 0) 	+ rot);
-			square right(	vec3(pos.x - size, pos.y, pos.z)	.rotate(pos, rot), size, vec3(0, 90, 0) 	+ rot);
+			square left(	vec3(pos.x + size, pos.y, pos.z)	.rotate(pos, rot), size, vec3(0, -90, 0) 	+ rot, color);
+			square right(	vec3(pos.x - size, pos.y, pos.z)	.rotate(pos, rot), size, vec3(0, 90, 0) 	+ rot, color);
 			
 			front.getFaces();
 			back.getFaces();
